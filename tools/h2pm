@@ -14,7 +14,8 @@ for lines() {
 
 }
 
-say "unit module LAPACKE;
+say "# Generated {DateTime.now}
+unit module LAPACKE;
 
 use NativeCall;
 
