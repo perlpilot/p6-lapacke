@@ -1,0 +1,27 @@
+#!/usr/bin/env perl6
+
+use LAPACKE;
+use NativeCall;
+
+my $a := CArray[num64].new;
+my $b := CArray[num64].new;
+
+for (1,1,1,2,3,4,3,5,2,4,2,5,5,4,3).kv -> $i, $v { $a[$i] = $v }
+for (-10,-3,12,14,14,12,16,16,18,16).kv -> $i, $v { $b[$i] = $v }
+
+my $m = 5;
+my $n = 3;
+my $nrhs = 2;
+my $lda = 3;
+my $ldb = 2;
+
+my $info = LAPACKE::dgels( ROW_MAJOR, 78, $m, $n, $nrhs, $a, $lda, $b, $ldb);
+
+say "info = $info";
+
+for ^$n -> $i {
+    for ^$nrhs -> $j {
+        print $b[$j + $ldb * $i].fmt("%f ");
+    }
+    print "\n";
+}
