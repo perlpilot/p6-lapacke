@@ -1,3 +1,5 @@
+# DUMMY FILE -- gets replaces when tools/make-lapacke is executed
+
 unit module LAPACKE;
 
 use NativeCall;

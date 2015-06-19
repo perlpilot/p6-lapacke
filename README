@@ -1,0 +1,7 @@
+Perl 6 interface so LAPACK libs.
+
+Must have lapacke installed already.
+
+To build the library run
+
+    tools/make-lapacke

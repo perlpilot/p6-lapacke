@@ -1,0 +1,4 @@
+#!/bin/sh
+
+H=/usr/include/lapacke.h
+gcc -E $H | grep -v '^#' | tools/h2pm > lib/LAPACKE.pm

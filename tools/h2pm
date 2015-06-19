@@ -1,0 +1,48 @@
+#!/usr/bin/env perl6
+
+my %typemap = (
+    'char'   => 'int8',  'char*'   => 'CArray[int8]',
+    'int'    => 'int',   'int*'    => 'CArray[int]',
+    'float'  => 'num32', 'float*'  => 'CArray[num32]',
+    'double' => 'num64', 'double*' => 'CArray[num64]',
+);
+
+my Bool $saw_lsame = False;
+for lines() { 
+    last if $saw_lsame && /^\s*$/;
+    $saw_lsame = True if /lsame_/;
+
+}
+
+say "unit module LAPACKE;
+
+use NativeCall;
+
+constant ROW_MAJOR is export = 101;
+constant COL_MAJOR is export = 102;
+";
+
+my $rest = lines();
+my @decls = $rest.split: ';';
+my %seen;
+for @decls {
+    s:g/\s+/ /;
+    next if /SELECT/;  # we don't do these yet
+    next unless /^ \s* (\w+) \s+ (\w+) \s* '(' ~ ')' ( <-[\)]>+ ) /;
+    my ($ret, $func, $params) = @();
+    next unless $func ~~ /^LAPACKE/;
+    next if %seen{$func}++;
+    my $perl-sym = $func.subst(/^LAPACKE_/, '');
+    next unless $perl-sym ~~ / ^<[ds]> /;        # we only do double and single precision routines for now
+
+    my @params =  map { %typemap{$_} // $_ }, 
+                  map { (.trim.split: /\s+/)[0] }, 
+                  map { .subst(/\s*const\s*/,'') },
+                  $params.split: ',';
+    my $returns = %typemap{$ret} // $ret;
+    say "our sub $perl-sym (@params.join(','))";
+    say "\treturns $returns";
+    say "\tis symbol('$func')";
+    say "\tis native('liblapacke') \{*\}\n";
+}
+
