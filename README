@@ -1,7 +1,17 @@
-Perl 6 interface so LAPACK libs.
+Perl 6 interface to LAPACK libs. See http://www.netlib.org/lapack/
 
-Must have lapacke installed already.
+This is just an experiment and *VERY* alpha code.
 
-To build the library run
+Must have lapacke (the C API to LAPACK) and the C header files already
+installed. If on ubuntu-ish OS, try
+
+    sudo apt-get install liblapacke-dev
+
+The Perl6 lib is built from the C header file /usr/include/lapacke.h.
+To build it, run:
 
     tools/make-lapacke
+
+and for a simple test, run
+
+    perl6 -Ilib examples/dgels-test-row
